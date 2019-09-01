@@ -53,8 +53,63 @@ callback的回传的参数有两个, 类似Node.js , 第一个是error, 如果�
 
 ## Hello World
 
+```bash
+mkdir netlify-demo
+cd netlify-demo
+npm init -y
+npm i -S netlify-lambda
+
+```
+
+编辑package.json
+
+```json
+"scripts": {
+    "start:lambda": "netlify-lambda serve src/lambda",
+    "build:lambda": "netlify-lambda build src/lambda"
+}
+```
+
+`src/lambda/helloworld.js` 中代码如下
+
+```js
+exports.handler = (event, context, callback) => {
+  callback(null, {
+        statusCode: 200,
+        body: 'Hello, world!',
+    });
+}; 
+```
+
+`netlify.toml` 
+
+```toml
+[build]
+    Functions = "lambda"
+    Command = "npm run build:lambda"
+
+```
+
+本地运行
+```bash
+npm run start:lambda
+```
+然后在 http://localhost:9000/helloworld 访问
+
+Github或者Gitlab提交之后在Netlify中 
+
+![newsite](./assets/newsite.png)
+
+![newsite2](./assets/newsite2.png)
+
+之后就不用管了, 每次Git push之后就自动更新了
 
 
+https://thirsty-austin-f10d08.netlify.com/.netlify/functions/helloworld
+
+![functions](./assets/functions-log.png)
+
+![setting](./assets/functions-setting.png)
 
 
 
