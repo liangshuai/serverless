@@ -112,5 +112,52 @@ https://thirsty-austin-f10d08.netlify.com/.netlify/functions/helloworld
 ![setting](./assets/functions-setting.png)
 
 
+## Zapier定时任务监控股票价格
 
 
+```js
+const axios = require('axios')
+const nodemailer = require('nodemailer')
+
+const URL = 'http://hq.sinajs.cn/list=sh601318'
+const getCurrentPrice = async function () {
+    const res = await axios.get(URL)
+    const arr =  res.data.split(',')
+    return arr[3]
+}
+
+exports.handler = async function (event, context, callback) {
+    const price = await getCurrentPrice()
+    let transporter = nodemailer.createTransport({
+        service: '163',
+        secureConnection: true,
+        auth: {
+            user: 'serverless_demo@163.com',
+            pass: 'serverless123'
+        }
+    })
+
+    transporter.sendMail({
+        from: 'serverless_demo@163.com',
+        to: 'serverless_demo@163.com',
+        subject: 'Price updated',
+        html: price
+    }, (error, info) => {
+        if (error) {
+            return callback(error)
+        }
+        callback(null, {
+            statusCode: 200,
+            body: price
+        })
+    })
+    
+}
+```
+Zapier设置
+
+![zapier](./assets/zapier-event.png)
+
+![zapier](./assets/zapier-webhook.png)
+
+![zapier](./assets/zapier-request.png)
